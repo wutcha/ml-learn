@@ -21,6 +21,10 @@ b = 0.0
 rate = 0.00001
 cycles = 1000
 
+plt.ion()
+plt.scatter(x,y)
+dline, = plt.plot(x,y)
+
 for i in range(cycles):
     line = m * x + b
 
@@ -42,8 +46,13 @@ for i in range(cycles):
     m -= rate * (dm)
     b -= rate * (db)
 
+    dline.set_ydata(line)
+
+    plt.draw()
+    plt.pause(0.01)
+    
+
 print("m:", m, "| b:", b)
 
-plt.scatter(x,y)
-plt.plot(x, m*x+b)
+plt.ioff()
 plt.show()
