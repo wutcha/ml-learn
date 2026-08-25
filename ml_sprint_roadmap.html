@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ML Sprint — 14 Days to Beginner-Proficient</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --paper:#FAF9F5;
+  --ink:#16213E;
+  --ink-soft:#4A5578;
+  --line:#DCD9CE;
+  --accent:#3D5AFE;
+  --accent-soft:#E7EAFE;
+  --amber:#E8963C;
+  --green:#2E9E6D;
+  --green-soft:#E4F4EC;
+  --card:#FFFFFF;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  padding:0 0 80px 0;
+}
+
+.wrap{max-width:920px;margin:0 auto;padding:40px 24px;}
+
+/* HERO */
+.hero{
+  border-bottom:1px solid var(--line);
+  padding-bottom:32px;
+  margin-bottom:32px;
+}
+.eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:10px;
+}
+h1{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:40px;
+  line-height:1.1;
+  margin:0 0 12px 0;
+  letter-spacing:-0.01em;
+}
+.sub{
+  font-size:16px;
+  color:var(--ink-soft);
+  max-width:560px;
+  line-height:1.5;
+  margin-bottom:28px;
+}
+
+.stat-row{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-end;margin-bottom:8px;}
+.stat-num{font-family:'Fraunces',serif;font-size:34px;font-weight:600;line-height:1;}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.06em;margin-top:4px;}
+
+.curve-box{margin-top:20px;}
+.curve-caption{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);display:flex;justify-content:space-between;margin-top:6px;}
+
+/* DAY NAV */
+.daynav{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding-bottom:12px;
+  margin-bottom:28px;
+  scrollbar-width:thin;
+}
+.daypill{
+  flex:0 0 auto;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  padding:8px 12px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  cursor:pointer;
+  background:var(--card);
+  color:var(--ink-soft);
+  transition:all .15s ease;
+  white-space:nowrap;
+}
+.daypill:hover{border-color:var(--accent);color:var(--ink);}
+.daypill.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.daypill.done{background:var(--green-soft);border-color:var(--green);color:var(--green);}
+.daypill.done.active{background:var(--green);color:#fff;}
+
+/* DAY CARD */
+.day-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:28px 30px;
+  display:none;
+}
+.day-card.visible{display:block;}
+.day-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:6px;
+}
+.day-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--accent);
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+}
+.day-title{
+  font-family:'Fraunces',serif;
+  font-size:26px;
+  font-weight:600;
+  margin:2px 0 4px 0;
+}
+.day-hours{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--ink-soft);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:5px 12px;
+  white-space:nowrap;
+}
+.day-note{
+  color:var(--ink-soft);
+  font-size:14px;
+  line-height:1.5;
+  margin-bottom:22px;
+  max-width:600px;
+}
+
+.task{
+  display:flex;
+  gap:14px;
+  padding:14px 0;
+  border-top:1px solid var(--line);
+  align-items:flex-start;
+}
+.task:last-child{padding-bottom:0;}
+.task-check{
+  margin-top:2px;
+  width:20px;
+  height:20px;
+  flex:0 0 20px;
+  border-radius:6px;
+  border:1.5px solid var(--line);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .12s ease;
+}
+.task-check:hover{border-color:var(--accent);}
+.task-check.checked{background:var(--green);border-color:var(--green);}
+.task-check svg{width:13px;height:13px;stroke:white;stroke-width:3;fill:none;opacity:0;transition:opacity .1s;}
+.task-check.checked svg{opacity:1;}
+
+.task-body{flex:1;}
+.task-title{font-size:15px;font-weight:600;margin-bottom:2px;}
+.task-title.done{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:var(--line);}
+.task-desc{font-size:13.5px;color:var(--ink-soft);line-height:1.5;}
+.task-time{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--accent);
+  flex:0 0 auto;
+  margin-top:2px;
+}
+.task-resource{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  margin-top:7px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11.5px;
+  color:var(--accent);
+  text-decoration:none;
+  border-bottom:1px solid transparent;
+}
+.task-resource:hover{border-bottom-color:var(--accent);}
+.task-resource::before{content:"→";}
+
+.day-footer{
+  display:flex;
+  justify-content:space-between;
+  margin-top:24px;
+  padding-top:18px;
+  border-top:1px solid var(--line);
+}
+.navbtn{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  background:none;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:8px 16px;
+  cursor:pointer;
+  color:var(--ink);
+}
+.navbtn:hover{border-color:var(--accent);color:var(--accent);}
+.navbtn:disabled{opacity:0.3;cursor:default;}
+.navbtn:disabled:hover{border-color:var(--line);color:var(--ink);}
+
+.reset-row{text-align:center;margin-top:28px;}
+.reset-link{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--ink-soft);
+  text-decoration:underline;
+  cursor:pointer;
+  background:none;
+  border:none;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">14-day sprint · ~5 hrs/day</div>
+    <h1>ML Sprint: Zero to Beginner-Proficient</h1>
+    <div class="sub">A crash course built for someone with multivariable calc, basic linear algebra, and a competitive programming background — going from ML beginner to comfortable-with-the-fundamentals before college starts. Ramp-up is compressed; the saved time goes into implementing backprop from scratch and a real Kaggle competition.</div>
+
+    <div class="stat-row">
+      <div>
+        <div class="stat-num" id="pctDone">0%</div>
+        <div class="stat-label">Complete</div>
+      </div>
+      <div>
+        <div class="stat-num" id="tasksDone">0 / 0</div>
+        <div class="stat-label">Tasks done</div>
+      </div>
+      <div>
+        <div class="stat-num" id="daysDone">0 / 14</div>
+        <div class="stat-label">Days finished</div>
+      </div>
+    </div>
+
+    <div class="curve-box">
+      <svg id="curveSvg" viewBox="0 0 860 90" width="100%" height="90" preserveAspectRatio="none"></svg>
+      <div class="curve-caption"><span>Day 1</span><span style="color:var(--ink-soft)">training loss — falls as you finish tasks</span><span>Day 14</span></div>
+    </div>
+  </div>
+
+  <div class="daynav" id="daynav"></div>
+
+  <div id="dayCards"></div>
+
+  <div class="reset-row"><button class="reset-link" id="resetBtn">reset all progress</button></div>
+
+</div>
+
+<script>
+const DAYS = [
+  {
+    title: "NumPy, Pandas & EDA — Fast Track",
+    note: "Condensed for a CP background: you already think in arrays and algorithms, so this is about learning the vectorized/statistical idioms, not syntax. Move quickly.",
+    hours: "5h",
+    tasks: [
+      ["NumPy essentials, vectorized", "Indexing, slicing, broadcasting, and reshaping — the shift from writing loops to expressing operations on whole arrays at once.", "1h", "NumPy: the absolute basics for beginners", "https://numpy.org/doc/stable/user/absolute_beginners.html"],
+      ["Drill it in", "Work through as many of these as you can — they cover indexing/slicing/broadcasting directly, with solutions if you get stuck.", "0.5h", "100 NumPy exercises (GitHub)", "https://github.com/rougier/numpy-100"],
+      ["Pandas fundamentals", "DataFrames, filtering, groupby, merge — six short lessons with hands-on exercises after each.", "1.5h", "Kaggle Learn: Pandas", "https://www.kaggle.com/learn/pandas"],
+      ["Matplotlib & Seaborn basics", "Line, bar, scatter, histogram, and a correlation heatmap.", "1h", "Matplotlib Pyplot tutorial", "https://matplotlib.org/stable/tutorials/pyplot.html"],
+      ["Full EDA on a real dataset", "Load the Titanic dataset and explore it end-to-end — missing values, distributions, correlations.", "1h", "Titanic dataset (Kaggle)", "https://www.kaggle.com/c/titanic/data"]
+    ]
+  },
+  {
+    title: "Probability, Stats & Linear Algebra — With Rigor",
+    note: "You have the math background to go a level deeper here than a typical beginner track — worth it, since it pays off directly in Week 2.",
+    hours: "5h",
+    tasks: [
+      ["Core probability & stats", "Distributions, mean/variance, Bayes' theorem — this channel is the gold standard for building intuition fast.", "1h", "StatQuest: Statistics Fundamentals (playlist)", "https://www.youtube.com/results?search_query=statquest+statistics+fundamentals+playlist"],
+      ["Correlation, causation & hypothesis testing", "Just enough to read a results table critically.", "1h", "StatQuest: Hypothesis Testing", "https://www.youtube.com/results?search_query=statquest+hypothesis+testing"],
+      ["3Blue1Brown: Essence of Linear Algebra", "Vectors, matrices, dot products, eigenvectors, and SVD — the best visual intuition available anywhere.", "1.5h", "Essence of Linear Algebra (playlist)", "https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab"],
+      ["Practice: eigendecomposition & SVD by hand", "Work a couple of small examples manually — this is the linear algebra PCA runs on later.", "1.5h", "Khan Academy: Linear Algebra", "https://www.khanacademy.org/math/linear-algebra"]
+    ]
+  },
+  {
+    title: "Linear Regression & Gradient Descent, From Scratch",
+    note: "Your first real model. Implementing this by hand — no library — is the single highest-leverage exercise in the sprint, and squarely in your wheelhouse.",
+    hours: "5h",
+    tasks: [
+      ["Linear regression intuition", "The cost function (MSE) and what 'fitting a line' really means.", "0.5h", "StatQuest: Linear Regression, Clearly Explained", "https://www.youtube.com/results?search_query=statquest+linear+regression+clearly+explained"],
+      ["Implement gradient descent from scratch", "Pure NumPy, multivariable, no sklearn. Derive the gradient yourself using the calc you already know.", "2h", "StatQuest: Gradient Descent, Step-by-Step", "https://www.youtube.com/results?search_query=statquest+gradient+descent+step+by+step"],
+      ["Bonus: derive & implement the normal equation", "The closed-form solution — compare its answer and cost to gradient descent's.", "1h", "Normal equation derivation", "https://www.youtube.com/results?search_query=normal+equation+linear+regression+derivation"],
+      ["Rebuild it with scikit-learn", "Same problem, sklearn's LinearRegression — sanity-check against your from-scratch version.", "1h", "sklearn.linear_model.LinearRegression docs", "https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html"],
+      ["Evaluation metrics", "R², MAE, RMSE — know what each one is actually telling you.", "0.5h", "sklearn: Regression metrics", "https://scikit-learn.org/stable/modules/model_evaluation.html#regression-metrics"]
+    ]
+  },
+  {
+    title: "Logistic Regression & Classification",
+    note: "Moving from predicting numbers to predicting categories.",
+    hours: "5h",
+    tasks: [
+      ["Logistic regression & the sigmoid", "Decision boundaries and why we don't just use linear regression for classification.", "1.5h", "StatQuest: Logistic Regression", "https://www.youtube.com/results?search_query=statquest+logistic+regression+clearly+explained"],
+      ["Classification metrics", "Accuracy, precision, recall, F1, confusion matrix, ROC-AUC — these come up constantly.", "1.5h", "sklearn: Classification metrics", "https://scikit-learn.org/stable/modules/model_evaluation.html#classification-metrics"],
+      ["Apply sklearn to a classification dataset", "Try the breast cancer dataset — it's built directly into sklearn, no download needed.", "1.5h", "sklearn: Toy datasets", "https://scikit-learn.org/stable/datasets/toy_dataset.html"],
+      ["Self-quiz on metrics", "Explain precision vs recall out loud, from memory, in one sentence each.", "0.5h"]
+    ]
+  },
+  {
+    title: "Model Validation, Overfitting & Regularization",
+    note: "The concepts that separate 'ran a model' from 'understands ML.'",
+    hours: "5h",
+    tasks: [
+      ["Train/test split & cross-validation", "Why a model can lie to you if you evaluate it on data it's already seen.", "1h", "sklearn: Cross-validation guide", "https://scikit-learn.org/stable/modules/cross_validation.html"],
+      ["Bias-variance tradeoff", "Overfitting vs underfitting — short and to the point.", "1.5h", "StatQuest: Bias and Variance", "https://www.youtube.com/results?search_query=statquest+bias+and+variance"],
+      ["Regularization: Ridge & Lasso", "L1 vs L2 penalties, and why they help.", "1.5h", "sklearn: Ridge & Lasso regression", "https://scikit-learn.org/stable/modules/linear_model.html#ridge-regression-and-classification"],
+      ["Hyperparameter tuning", "Try GridSearchCV on a model from Day 4.", "1h", "sklearn.model_selection.GridSearchCV docs", "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html"]
+    ]
+  },
+  {
+    title: "Trees, Ensembles & Mini Project #1",
+    note: "First project day — this is where it starts feeling real.",
+    hours: "5h",
+    tasks: [
+      ["Decision trees & random forests", "How trees split, and why forests beat single trees.", "1.5h", "StatQuest: Random Forests", "https://www.youtube.com/results?search_query=statquest+random+forests+part+1"],
+      ["Intro to gradient boosting", "Just the concept + try it once on a small dataset.", "0.5h", "XGBoost: Get Started", "https://xgboost.readthedocs.io/en/stable/get_started.html"],
+      ["Feature importance", "Which features actually drive predictions, and how to read that output.", "0.5h", "sklearn: Feature importance", "https://scikit-learn.org/stable/modules/permutation_importance.html"],
+      ["Mini project: Titanic (Kaggle)", "Full pipeline: EDA → clean → train 3 models → compare → pick a winner.", "2.5h", "Titanic: Machine Learning from Disaster", "https://www.kaggle.com/c/titanic"]
+    ]
+  },
+  {
+    title: "Unsupervised Learning",
+    note: "No labels this time — finding structure instead of predicting an answer.",
+    hours: "5h",
+    tasks: [
+      ["K-means clustering", "The algorithm, and how to pick k.", "1.5h", "sklearn: K-means clustering", "https://scikit-learn.org/stable/modules/clustering.html#k-means"],
+      ["PCA & dimensionality reduction", "What it means to 'compress' features while keeping the signal.", "1.5h", "sklearn: PCA (decomposition guide)", "https://scikit-learn.org/stable/modules/decomposition.html#pca"],
+      ["Practice: cluster + visualize with PCA", "Reduce a dataset to 2D with PCA and plot the clusters.", "2h", "sklearn.decomposition.PCA docs", "https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html"]
+    ]
+  },
+  {
+    title: "Neural Networks: Theory + Backprop From Scratch",
+    note: "The day this sprint is built around for you specifically — implementing backprop with raw NumPy, no autograd, is exactly the kind of from-scratch build a CP background makes easy to enjoy.",
+    hours: "5h",
+    tasks: [
+      ["Perceptrons & activation functions", "ReLU, sigmoid, softmax — and why nonlinearity matters. Watch episodes 1-2.", "1h", "3Blue1Brown: Neural Networks (playlist)", "https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi"],
+      ["Forward pass & backpropagation intuition", "Episodes 3-4 of the same series — the best backprop explanation that exists.", "1.5h", "3Blue1Brown: Neural Networks (playlist)", "https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi"],
+      ["Implement backprop from scratch in raw NumPy", "A 2-layer network, manual forward pass, manual gradient computation, manual weight updates. No autograd allowed. Chapter 2 of this free book derives the exact equations you'll implement.", "2h", "Nielsen: Neural Networks and Deep Learning, Ch. 2", "http://neuralnetworksanddeeplearning.com/chap2.html"],
+      ["Loss functions for neural nets", "Cross-entropy loss and why it's used for classification.", "0.5h", "sklearn: Log loss", "https://scikit-learn.org/stable/modules/model_evaluation.html#log-loss"]
+    ]
+  },
+  {
+    title: "PyTorch Basics",
+    note: "Now that you've derived backprop by hand, autograd will feel less like magic and more like a tool that's doing the tedious part for you.",
+    hours: "5h",
+    tasks: [
+      ["Tensors & autograd", "The fastest official onramp to PyTorch's core objects.", "1h", "PyTorch: Deep Learning with PyTorch: A 60 Minute Blitz", "https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html"],
+      ["Build a feedforward NN in PyTorch", "Rebuild yesterday's from-scratch network using PyTorch's layers and optimizer — same Blitz tutorial covers this.", "1.5h", "PyTorch: Neural Networks section of the Blitz", "https://pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html"],
+      ["Train it on a toy dataset", "make_moons from sklearn — watch it actually learn.", "1.5h", "sklearn.datasets.make_moons docs", "https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_moons.html"],
+      ["Compare to your from-scratch version", "Same architecture, same data — check the results roughly match.", "1h"]
+    ]
+  },
+  {
+    title: "Image Classification & CNN Intuition",
+    note: "Your first taste of computer vision.",
+    hours: "5h",
+    tasks: [
+      ["MNIST digit classification in PyTorch", "The 'hello world' of deep learning — build and train it end to end.", "2h", "PyTorch MNIST example (official repo)", "https://github.com/pytorch/examples/tree/main/mnist"],
+      ["CNN concepts", "Convolutions, pooling, and feature maps, with the clearest visual walkthrough available.", "1.5h", "CS231n: Convolutional Neural Networks", "https://cs231n.github.io/convolutional-networks/"],
+      ["Train a small CNN", "The Blitz's CIFAR-10 walkthrough — compare accuracy to your feedforward net.", "1.5h", "PyTorch: Training a Classifier (CIFAR-10)", "https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html"]
+    ]
+  },
+  {
+    title: "Kaggle Competition Sprint",
+    note: "The most 'you' day in this plan — treat it like a contest. Real leaderboard, real time box, real ranking.",
+    hours: "5h",
+    tasks: [
+      ["Pick an active Kaggle competition", "Browse and filter by 'Getting Started' or Playground Series — something with an actual live leaderboard.", "0.5h", "Kaggle: Competitions", "https://www.kaggle.com/competitions"],
+      ["Build a first end-to-end submission", "Simple model, submitted, ranked — get on the board before optimizing anything.", "2h"],
+      ["Iterate: feature engineering + 2 more models", "This course is built exactly around improving a Kaggle-style submission.", "2h", "Kaggle Learn: Intermediate Machine Learning", "https://www.kaggle.com/learn/intermediate-machine-learning"],
+      ["Final submission & reflect on your rank", "Check the leaderboard, read a couple of top public notebooks to see what you missed.", "0.5h"]
+    ]
+  },
+  {
+    title: "Capstone Project — Day 1",
+    note: "Pick something you actually care about. Motivation matters more than dataset choice.",
+    hours: "5h",
+    tasks: [
+      ["Choose your dataset/problem", "Something genuinely interesting to you.", "0.5h", "Kaggle: Datasets", "https://www.kaggle.com/datasets"],
+      ["EDA & preprocessing", "Clean it, understand it, handle missing values and outliers.", "2h"],
+      ["Baseline model + first iteration", "Get something working end-to-end before optimizing.", "2.5h"]
+    ]
+  },
+  {
+    title: "Capstone Project — Day 2 & Portfolio",
+    note: "Finish strong and make it show-able.",
+    hours: "5h",
+    tasks: [
+      ["Improve & evaluate the model", "Tune it, try 1-2 alternative approaches, settle on a final version.", "2h"],
+      ["Write it up clearly", "A README that explains what you did and why — this is what people actually read.", "1.5h", "Make a README", "https://www.makeareadme.com/"],
+      ["Push to GitHub", "Clean commit history, clear repo structure — this becomes your proof of work.", "1.5h", "GitHub Docs: Creating a new repository", "https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository"]
+    ]
+  },
+  {
+    title: "Review, Consolidate & Look Ahead",
+    note: "A lighter day on purpose — consolidation is part of learning, not a break from it.",
+    hours: "4h",
+    tasks: [
+      ["Self-quiz: 20 core terms from memory", "Bias-variance, regularization, precision/recall, gradient descent, backprop, etc. — no notes. Check yourself against this glossary after.", "1h", "Google: Machine Learning Glossary", "https://developers.google.com/machine-learning/glossary"],
+      ["Revisit your weakest topic", "Whatever felt shakiest this sprint — give it one more focused pass using this sprint's own resources.", "1.5h"],
+      ["Scan what's next", "See what a structured next step looks like.", "1h", "DeepLearning.AI: Deep Learning Specialization", "https://www.deeplearning.ai/courses/deep-learning-specialization/"],
+      ["Rest and take stock", "Two weeks ago you didn't know this. Notice that.", "—"]
+    ]
+  }
+];
+
+
+let progress = {};
+const STORAGE_KEY = 'ml-sprint-progress-v1';
+let currentDay = 0;
+
+async function loadProgress(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, false);
+    if(res && res.value){ progress = JSON.parse(res.value); }
+  }catch(e){ progress = {}; }
+  render();
+}
+
+async function saveProgress(){
+  try{ await window.storage.set(STORAGE_KEY, JSON.stringify(progress), false); }
+  catch(e){ console.error('save failed', e); }
+}
+
+function taskId(d,t){ return `d${d}-t${t}`; }
+
+function dayCompletion(d){
+  const total = DAYS[d].tasks.length;
+  let done = 0;
+  for(let t=0;t<total;t++){ if(progress[taskId(d,t)]) done++; }
+  return {done,total};
+}
+
+function overallStats(){
+  let totalTasks=0, doneTasks=0, doneDays=0;
+  DAYS.forEach((day,d)=>{
+    const {done,total} = dayCompletion(d);
+    totalTasks+=total; doneTasks+=done;
+    if(done===total) doneDays++;
+  });
+  return {totalTasks,doneTasks,doneDays};
+}
+
+function drawCurve(){
+  const svg = document.getElementById('curveSvg');
+  const w=860,h=90,pad=6;
+  const n=DAYS.length;
+  let points=[];
+  for(let d=0;d<n;d++){
+    const {done,total} = dayCompletion(d);
+    const frac = total? done/total : 0;
+    const x = pad + (d/(n-1))*(w-2*pad);
+    const y = pad + (1-frac)*(h-2*pad);
+    points.push([x,y]);
+  }
+  const pathD = points.map((p,i)=> (i===0?'M':'L')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  const areaD = pathD + ` L${points[n-1][0]},${h} L${points[0][0]},${h} Z`;
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#3D5AFE" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="#3D5AFE" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="${areaD}" fill="url(#grad)" />
+    <path d="${pathD}" fill="none" stroke="#3D5AFE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${points.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="${i===currentDay?4.5:3}" fill="${i===currentDay?'#3D5AFE':'#B9C2FF'}" />`).join('')}
+  `;
+}
+
+function renderNav(){
+  const nav = document.getElementById('daynav');
+  nav.innerHTML='';
+  DAYS.forEach((day,d)=>{
+    const {done,total} = dayCompletion(d);
+    const pill = document.createElement('div');
+    pill.className = 'daypill' + (d===currentDay?' active':'') + (done===total?' done':'');
+    pill.textContent = `Day ${d+1}`;
+    pill.onclick = ()=>{ currentDay=d; render(); };
+    nav.appendChild(pill);
+  });
+}
+
+function renderCards(){
+  const container = document.getElementById('dayCards');
+  container.innerHTML='';
+  DAYS.forEach((day,d)=>{
+    const card = document.createElement('div');
+    card.className = 'day-card' + (d===currentDay?' visible':'');
+    const {done,total} = dayCompletion(d);
+
+    card.innerHTML = `
+      <div class="day-head">
+        <div>
+          <div class="day-num">Day ${d+1} of 14</div>
+          <div class="day-title">${day.title}</div>
+        </div>
+        <div class="day-hours">${done}/${total} tasks · ${day.hours} budget</div>
+      </div>
+      <div class="day-note">${day.note}</div>
+      <div class="tasklist"></div>
+      <div class="day-footer">
+        <button class="navbtn" data-dir="-1" ${d===0?'disabled':''}>&larr; Previous day</button>
+        <button class="navbtn" data-dir="1" ${d===DAYS.length-1?'disabled':''}>Next day &rarr;</button>
+      </div>
+    `;
+
+    const tasklist = card.querySelector('.tasklist');
+    day.tasks.forEach((task,t)=>{
+      const id = taskId(d,t);
+      const checked = !!progress[id];
+      const row = document.createElement('div');
+      row.className='task';
+      const resourceHtml = task[4]
+        ? `<a class="task-resource" href="${task[4]}" target="_blank" rel="noopener">${task[3]}</a>`
+        : '';
+      row.innerHTML = `
+        <div class="task-check ${checked?'checked':''}" data-id="${id}">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="task-body">
+          <div class="task-title ${checked?'done':''}">${task[0]}</div>
+          <div class="task-desc">${task[1]}</div>
+          ${resourceHtml}
+        </div>
+        <div class="task-time">${task[2]}</div>
+      `;
+      row.querySelector('.task-check').onclick = ()=>{
+        progress[id] = !progress[id];
+        saveProgress();
+        render();
+      };
+      tasklist.appendChild(row);
+    });
+
+    card.querySelectorAll('.navbtn').forEach(btn=>{
+      btn.onclick = ()=>{
+        currentDay += parseInt(btn.dataset.dir);
+        render();
+      };
+    });
+
+    container.appendChild(card);
+  });
+}
+
+function renderStats(){
+  const {totalTasks,doneTasks,doneDays} = overallStats();
+  document.getElementById('pctDone').textContent = totalTasks? Math.round(100*doneTasks/totalTasks)+'%' : '0%';
+  document.getElementById('tasksDone').textContent = `${doneTasks} / ${totalTasks}`;
+  document.getElementById('daysDone').textContent = `${doneDays} / 14`;
+}
+
+function render(){
+  renderNav();
+  renderCards();
+  renderStats();
+  drawCurve();
+}
+
+document.getElementById('resetBtn').onclick = async ()=>{
+  if(confirm('Reset all progress? This clears every checked task.')){
+    progress = {};
+    await saveProgress();
+    render();
+  }
+};
+
+loadProgress();
+</script>
+</body>
+</html>
