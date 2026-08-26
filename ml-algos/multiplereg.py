@@ -60,7 +60,7 @@ for _ in range(cycles):
 # testing
 
 testing_values = values[:,8000:]
-scaled_testing_values = scaled_values = ((testing_values-np.mean(testing_values,axis=1).reshape(5,1))/(np.std(testing_values,axis=1).reshape(5,1)))
+scaled_testing_values = ((testing_values-np.mean(testing_values,axis=1).reshape(5,1))/(np.std(testing_values,axis=1).reshape(5,1)))
 testing_predictions = weights.transpose() @ scaled_testing_values + bias
 testing_mse = np.mean((testing_predictions - performance[8000:])**2)
 
