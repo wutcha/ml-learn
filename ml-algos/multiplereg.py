@@ -21,23 +21,27 @@ values = np.array([
     hours_sleep,
     sample_practice])
 
-weights = np.zeros(5)
-bias = 0.0
-rate = 0.0001
-cycles = 1000
+scaled_values = (values-np.mean(values,axis=1).reshape(5,1))/(np.std(values,axis=1).reshape(5,1))
 
+#feature_scaled_values = (values-(np.mean(values,axis=1).transpose()))/np.std(values, axis=1).transpose()
+print(scaled_values)
 print(values)
 
-for _ in range(1000):
-    predictions = (weights.transpose() @ values + bias)
+weights = np.zeros(5)
+bias = 0.0
+rate = 0.0005
+cycles = 10000
+
+for _ in range(cycles):
+    predictions = (weights.transpose() @ scaled_values + bias)
 
     residuals = predictions - performance
     loss = np.mean(residuals**2)
 
     if(_%10==0):
-         print(f"Cycle: {_} | Error: {loss}")
+        print(f"Cycle: {_} | Error: {loss}")
 
-    gradients = np.mean(2 * values * residuals, axis=1)
+    gradients = np.mean(2 * scaled_values * residuals, axis=1)
     db = np.mean(2 * residuals)
     #print(residuals)
     #print(values*residuals.transpose())
@@ -46,7 +50,7 @@ for _ in range(1000):
     weights -= gradients * rate
     bias -= db * rate
 
-print(weights)
+print(weights, bias)
 
 
 
@@ -77,7 +81,9 @@ for i, ax in enumerate(axes.flat[:5]):
     plot_values = np.tile(fixed, (100, 1))
     plot_values[:, i] = x_plot
 
-    y_plot = weights @ plot_values.T + bias
+    plot_values_scaled = (plot_values - np.mean(values, axis=1)) / np.std(values, axis=1)
+
+    y_plot = weights @ plot_values_scaled.T + bias
 
     ax.scatter(feature, performance, alpha=0.3)
     ax.plot(x_plot, y_plot, color='red')
