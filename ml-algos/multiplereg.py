@@ -21,7 +21,9 @@ values = np.array([
     hours_sleep,
     sample_practice])
 
-scaled_values = (values-np.mean(values,axis=1).reshape(5,1))/(np.std(values,axis=1).reshape(5,1))
+training_values = values[:, :8000]
+
+scaled_values = ((training_values-np.mean(training_values,axis=1).reshape(5,1))/(np.std(training_values,axis=1).reshape(5,1)))
 
 #feature_scaled_values = (values-(np.mean(values,axis=1).transpose()))/np.std(values, axis=1).transpose()
 print(scaled_values)
@@ -32,10 +34,15 @@ bias = 0.0
 rate = 0.0005
 cycles = 10000
 
+# training
+
 for _ in range(cycles):
     predictions = (weights.transpose() @ scaled_values + bias)
+    if(_==0) :
+        print(np.shape(predictions))
 
-    residuals = predictions - performance
+    residuals = predictions - performance[:8000]
+
     loss = np.mean(residuals**2)
 
     if(_%10==0):
@@ -50,7 +57,14 @@ for _ in range(cycles):
     weights -= gradients * rate
     bias -= db * rate
 
-print(weights, bias)
+# testing
+
+testing_values = values[:,8000:]
+scaled_testing_values = scaled_values = ((testing_values-np.mean(testing_values,axis=1).reshape(5,1))/(np.std(testing_values,axis=1).reshape(5,1)))
+testing_predictions = weights.transpose() @ scaled_testing_values + bias
+testing_mse = np.mean((testing_predictions - performance[8000:])**2)
+
+print(f"Weights + bias: {weights, bias} | Testing MSE: {testing_mse}")
 
 
 
@@ -59,9 +73,7 @@ print(weights, bias)
 
 
 
-
-
-
+# vibecoded plotting
 
 fig, axes = plt.subplots(2, 3, figsize=(15, 8))
 
@@ -95,4 +107,4 @@ for i, ax in enumerate(axes.flat[:5]):
 axes.flat[5].axis("off")
 
 plt.tight_layout()
-plt.show()
+#plt.show()
