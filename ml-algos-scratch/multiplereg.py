@@ -7,7 +7,7 @@ data = pd.read_csv('datasets/Student_Performance.csv')
 # Hours Studied, Previous Scores, Extracurricular Activities, Sleep Hours, Sample Question Papers Practiced, Performance Index
 
 class MultipleRegression:
-    rate = 0.0005
+    rate = 0.001
     cycles = 10000
     def __init__(self, rate=0.0005, cycles=10000):
         self.rate = rate
@@ -33,7 +33,7 @@ class MultipleRegression:
 
             loss = np.mean(residuals**2)
 
-            if(_%10==0):
+            if(_%1000==0):
                 print(f"Cycle: {_} | Error: {loss}")
 
             gradients = np.mean(2 * scaled_values * residuals[:,None], axis=0)

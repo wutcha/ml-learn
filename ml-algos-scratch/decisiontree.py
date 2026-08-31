@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import random
+from multiplereg import MultipleRegression
 
 def gini_impurity(below_yes, below_no, above_yes, above_no):
 
@@ -20,7 +22,9 @@ class Node:
         self.pred = pred
     
 class DecTree:
-    def __init__(self, data, answers, max_depth):
+    def __init__(self, data, answers, max_depth, random_forest = False, random_features_count = 0):
+        self.random_forest = random_forest
+        self.random_features_count = random_features_count
         self.max_depth = max_depth
         self.root = self.build(data, answers, 0)
 
@@ -32,7 +36,11 @@ class DecTree:
         best_thres = 0.0
         smallest_gini = 1.0
 
-        for feature in range(len(data[0])):
+        features = range(data.shape[1])
+        if self.random_forest == True:
+            features = random.sample(range(data.shape[1]),self.random_features_count)
+
+        for feature in features:
             order = np.argsort(data[:,feature])
             sorted_values = data[order,feature]
             sorted_ans = answers[order]
@@ -99,25 +107,33 @@ class DecTree:
 df = pd.read_csv('datasets/Titanic-Train-Dataset.csv', index_col=0)
 df_test = pd.read_csv('datasets/Titanic-Test-Dataset.csv', index_col=0)
 
-def cleanup(df, features, contains_ans = True):
-    dfr = df.fillna({'Age': df['Age'].median()})
+def cleanup(df, features):
+    dfr = df.copy()
     dfr['Sex'] = df['Sex'].replace({'male': 1.0, 'female': 0.0})
 
-    data = dfr[features].to_numpy()
-    if not contains_ans:
-        return data
+    age = MultipleRegression()
+    known = dfr['Age'].notna()
+
+    age.fit(dfr.loc[known, ['Pclass', 'Sex', 'SibSp', 'Parch', 'Fare']].to_numpy(dtype=float), dfr.loc[known, 'Age'].to_numpy(dtype=float))
+    dfr.loc[~known, 'Age'] = age.predict(dfr.loc[~known, ['Pclass', 'Sex', 'SibSp', 'Parch', 'Fare']].to_numpy(dtype=float))
+
+    data = dfr[features].to_numpy(dtype=float)
     answers = dfr['Survived'].to_numpy()
 
-    return data, answers
+    return data, answers, age
 
 if __name__=='__main__':
     features = ['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare']
 
-    train_data, train_answers = cleanup(df, features)
-    test_data = cleanup(df_test, features, contains_ans = False)
+    train_data, train_answers, age_model = cleanup(df, features)
+    df_test['Sex'] = df_test['Sex'].replace({'male': 1.0, 'female': 0.0})
+    df_test = df_test[features]
+    unknown = (df_test['Age'].isna())
+    df_test.loc[unknown,'Age'] = age_model.predict(df_test.loc[unknown, ['Pclass', 'Sex', 'SibSp', 'Parch', 'Fare']].to_numpy(dtype=float))
+    test_data = df_test[features].to_numpy()
     # male = 1, female = 0
     
-    tree = DecTree(train_data, train_answers, 7)
+    tree = DecTree(train_data, train_answers, 5)
     ans_df = pd.DataFrame(index=df_test.index, columns=['Survived'], data={'Survived': tree.get_predictions(test_data)})
     print(ans_df)
     ans_df.to_csv('submissions/titanic_decision_tree.csv')
