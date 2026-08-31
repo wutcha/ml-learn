@@ -7,7 +7,7 @@ data = pd.read_csv('datasets/Student_Performance.csv')
 # Hours Studied, Previous Scores, Extracurricular Activities, Sleep Hours, Sample Question Papers Practiced, Performance Index
 
 class MultipleRegression:
-    rate = 0.001
+    rate = 0.003
     cycles = 10000
     def __init__(self, rate=0.0005, cycles=10000):
         self.rate = rate
@@ -103,19 +103,19 @@ values = np.array([
 
 # testing
 
-model = MultipleRegression()
+# model = MultipleRegression()
 
-data['Extracurricular Activities'] = data['Extracurricular Activities'].replace({'Yes': 1.0, 'No': 0.0})
-training_answers = data['Performance Index'].to_numpy(dtype=float)
-training_data = data.drop(columns=['Performance Index']).to_numpy(dtype=float)
+# data['Extracurricular Activities'] = data['Extracurricular Activities'].replace({'Yes': 1.0, 'No': 0.0})
+# training_answers = data['Performance Index'].to_numpy(dtype=float)
+# training_data = data.drop(columns=['Performance Index']).to_numpy(dtype=float)
 
-model.fit(training_data[:8000],training_answers[:8000])
-y = model.predict(training_data[8000:])
-testing_answers = training_answers[8000:]
+# model.fit(training_data[:8000],training_answers[:8000])
+# y = model.predict(training_data[8000:])
+# testing_answers = training_answers[8000:]
 
-testing_mse = np.mean((testing_answers - y)**2)
+# testing_mse = np.mean((testing_answers - y)**2)
 
-print(f"Weights + bias: {model.weights, model.bias} | Testing MSE: {testing_mse}")
+# print(f"Weights + bias: {model.weights, model.bias} | Testing MSE: {testing_mse}")
 
 
 
